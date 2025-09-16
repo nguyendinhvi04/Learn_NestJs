@@ -89,13 +89,13 @@ export default function CarList() {
         try {
             const updatedCar = {
                 id,
-                name: 'Updated Car Name',
-                brand: 'Updated Brand',
-                model: 'Updated Model',
+                name: 'Da Thay Doi',
+                brand: 'Da Thay Doi',
+                model: 'Da Thay Doi',
                 year: 2023,
                 price: 30000,
-                description: 'Updated description',
-                image: 'updated-image.jpg',
+                description: 'mo ta da thay doi',
+                image: 'khong co',
                 stock: 10,
             };
             const res = await fetch('/api/products', {

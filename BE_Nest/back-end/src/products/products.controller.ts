@@ -25,7 +25,6 @@ export class ProductsController {
 
   @Post()
   create(@Body() body: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.productsService.create(body);
   }
 

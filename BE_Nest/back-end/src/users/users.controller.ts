@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Patch } from '@nestjs/common';
 import { Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
 
@@ -18,18 +18,20 @@ export class UsersController {
 
   @Post()
   create(@Body() body: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.usersService.create(body);
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() body: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.usersService.update(Number(id), body);
   }
 
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.usersService.remove(Number(id));
+  }
+  @Patch(':id')
+  findOne2(@Param('id') id: string) {
+    return `Thu nghiem controller ${id}`;
   }
 }

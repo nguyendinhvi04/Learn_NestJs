@@ -2,6 +2,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+import ToolBar from './ToolBar';
 
 interface User {
     id: number;
@@ -15,7 +19,16 @@ export default function UsersList() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const columns = [
+        { field: "id", header: "ID" },
+        { field: "name", header: "Full Name" },
+        { field: "email", header: "Email" },
+        { field: "phone", header: "Phone" },
+        { field: "password", header: "Password" },
+        { field: "Role", header: "Role" },
+        { field: "create_at", header: "Create date" },
 
+    ]
     const fetchUsers = async () => {
         try {
             const res = await fetch('/api/users');
@@ -31,6 +44,28 @@ export default function UsersList() {
     useEffect(() => {
         fetchUsers();
     }, []);
+
+  const handleUpdate =  async   (id: number) => {
+        try {
+            const updatedUser = {
+                id,
+                name: 'Updated Name',
+                email: 'updated@example.com',
+                phone: '1234567890',
+                role: 'user',
+            };
+            const res = await fetch('/api/users', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedUser),
+            });
+            fetchUsers();
+        } catch (err) {
+            setError("Lỗi khi cập nhật người dùng");
+        }
+    }
 
     const handleDelete = async (id: number) => {
         try {
@@ -52,54 +87,34 @@ export default function UsersList() {
 
     return (
         <>
-            <section className="bg-[#051622] text-white px-12 py-16">
-                <h2 className="text-2xl font-bold mb-8">Users</h2>
-                <div className="grid md:grid-cols-3 gap-8">
-                    {users.map((user) => (
-                        <div key={user.id} className="overflow-hidden rounded-lg shadow-lg bg-gray-800 p-6">
-                            <h3 className="text-xl font-semibold mb-2">{user.name}</h3>
-                            <p className="text-sm text-gray-300 mb-1">Email: {user.email}</p>
-                            <p className="text-sm text-gray-300">Phone: {user.phone}</p>
-                            <p className="text-sm text-gray-300">Role: {user.role}</p>
-                            <p className="text-sm text-gray-300">ID: {user.id}</p>
-                            <button
-                                onClick={() => handleDelete(user.id)}
-                                className="mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                            >
-                                Delete
-                            </button>
-                            <button
-                                onClick={() => handleUpdate(user.id)}
-                                className="mt-2 ml-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            >
-                                Update
-                            </button>
-                        </div>
-                    ))}
+          <div className='card-header'>
+                    <ToolBar/>
                 </div>
-            </section>
-        </>
-    );
+        <div className='card'>
+            <DataTable value={users} tableStyle={{ minWidth: "50 rem" }} paginator rows={6} rowsPerPageOptions={[5, 10, 25, 50]}>
+                {columns.map((col, i) => (
+                    <Column key={col.field} field={col.field} header={col.header} />
+                ))}
+                <Column
+                    header="Action"
+                    body={(rowData) => (
+                        <div className="flex gap-2">
+                            <Button
+                                icon="pi pi-pencil"
+                                className="p-button-rounded p-button-success"
+                                onClick={() => console.log('Edit', rowData)}
+                            />
+                            <Button
+                                icon="pi pi-trash"
+                                className="p-button-rounded p-button-danger"
+                                onClick={() => console.log('Delete', rowData)}
+                            />
+                        </div>
+                    )}
+                />
 
-    async function handleUpdate(id: number) {
-        try {
-            const updatedUser = {
-                id,
-                name: 'Updated Name',
-                email: 'updated@example.com',
-                phone: '1234567890',
-                role: 'user',
-            };
-            const res = await fetch('/api/users', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedUser),
-            });
-            fetchUsers();
-        } catch (err) {
-            setError("Lỗi khi cập nhật người dùng");
-        }
-    }
+            </DataTable>
+        </div>
+</>
+    );
 }

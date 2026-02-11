@@ -1,12 +1,16 @@
 import Hero from "@/components/Hero";
 import Image from "next/image";
 import UserList from "@/components/UserList";
-import CarList from "@/components/CarList";
+import CarList from "@/components/PropductList";
+
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+
 export default function Home() {
   return (
       <>
       <Hero/>
-      <CarList/>
+      {/* <CarList/> */}
       <div className="text-center my-16">
         <h2 className="text-3xl font-bold mb-4">Khám Phá Kia</h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
@@ -23,8 +27,8 @@ export default function Home() {
         />
       </div> 
       <div>
-        <h2>Danh sách khách hàng trong tháng</h2>
-        <UserList/>
+        {/* <h2>Danh sách khách hàng trong tháng</h2>
+        <UserList/> */}
       </div>
       <div className="text-center my-16">
         <h2 className="text-3xl font-bold mb-4">Tại Sao Chọn Kia?</h2>

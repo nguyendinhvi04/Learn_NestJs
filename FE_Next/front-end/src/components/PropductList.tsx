@@ -1,23 +1,39 @@
 "use client"
 import { useEffect, useState } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Col } from 'sequelize/lib/utils';
+import { Button } from 'primereact/button';
+import ToolBar from './ToolBar';
 
 interface Car {
     id: number;
     name: string;
     brand: string;
     model: string;
-    year:  number;
+    year: number;
     price: number;
     description: string;
     image: string;
-    stock: number ;             
+    stock: number;
 }
 
-export default function CarList() {
-     const [cars, setCars] = useState<Car[]>([]);
-     const [loading, setLoading] = useState(true);
+export default function ProductList() {
+    const [cars, setCars] = useState<Car[]>([]);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const columns = [
+        { field: "id", header: "ID" },
+        { field: "name", header: "Name" },
+        { field: "brand", header: "model" },
+        { field: "year", header: "Year" },
+        { field: "price", header: "Price" },
+        { field: "description", header: "Description" },
+        { field: "image", header: "Image" },
+        { field: "stock", header: "Stock" },
+        { field: "create_at", header: "Create date" },
 
+    ]
     const fetchCars = async () => {
         try {
             const res = await fetch('/api/products');
@@ -30,13 +46,9 @@ export default function CarList() {
         }
     };
 
-    useEffect (() => {
-        fetchCars();
-    }, [] )
-
     useEffect(() => {
         fetchCars();
-    }, []);
+    }, [])
 
     const handleDelete = async (id: number) => {
         try {
@@ -53,12 +65,15 @@ export default function CarList() {
         }
     };
 
-   if (loading) return <div>Đang tải danh sách xe...</div>;
+    if (loading) return <div>Đang tải danh sách xe...</div>;
     if (error) return <div>Lỗi: {error}</div>;
     return (
         <>
-            <section className="bg-[#051622] text-white px-12 py-16">
-                <div className="grid md:grid-cols-3 gap-8 h-full" >
+        <div className='card-header'>
+            <ToolBar/>
+        </div>
+            <div className='card'>
+                {/* <div className="grid md:grid-cols-3 gap-8 h-full" >
                     {cars.map((car) => (
                         <div key={car.id} className="overflow-hidden rounded-lg shadow-lg  h-full">
                             <div className="p-6">
@@ -80,8 +95,30 @@ export default function CarList() {
                             </div>
                         </div>
                     ))}
-                </div>
-            </section>
+                </div> */}
+                <DataTable value={cars} tableStyle={{ minWidth: '50rem' }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}>
+                    {columns.map((col, i) => (
+                        <Column key={col.field} field={col.field} header={col.header} />
+                    ))}
+                    <Column
+                        header="Action"
+                        body={(rowData) => (
+                            <div className="flex gap-2">
+                                <Button
+                                    icon="pi pi-pencil"
+                                    className="p-button-rounded p-button-success"
+                                    onClick={() => console.log('Edit', rowData)}
+                                />
+                                <Button
+                                    icon="pi pi-trash"
+                                    className="p-button-rounded p-button-danger"
+                                    onClick={() => console.log('Delete', rowData)}
+                                />
+                            </div>
+                        )}
+                    />
+                </DataTable>
+            </div>
         </>
     )
 

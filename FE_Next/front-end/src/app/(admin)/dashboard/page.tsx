@@ -1,46 +1,56 @@
 'use client';
-
 import { useState } from 'react';
-import Overview from '@/components/Overview';
-import CarList from '@/components/CarList';
+import ProductList from '@/components/PropductList';
 import UserList from '@/components/UserList';
 import AppointmentList from '@/components/AppointmentList';
+import { TabView, TabPanel } from 'primereact/tabview';
+import MenuDashboard from '@/components/MenuDashboard';
+import ChartDashboard from '@/components/ChartDashboard';
 
-const tabs = [
-  { name: 'Tổng quan', component: Overview },
-  { name: 'Quản lí xe', component: CarList },
-  { name: 'Quản lí người dùng', component: UserList },
-  { name: 'Quản lí lịch hẹn', component: AppointmentList },
-];
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState(0);
-
-  const ActiveComponent = tabs[activeTab].component;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeKey, setActiveKey] = useState('products');
+  const handleMenuSelect = (key: string) => {
+    setActiveKey(key);
+    switch (key) {
+      case 'charts': 
+        setActiveIndex(0);
+      case 'products':
+        setActiveIndex(1);
+        break;
+      case 'users':
+        setActiveIndex(2);
+        break;
+      case 'appointments':
+        setActiveIndex(3);
+        break;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8">
-            {tabs.map((tab, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveTab(index)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === index
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                {tab.name}
-              </button>
-            ))}
-          </div>
+    <div className="min-h-screen bg-gray-100 p-4">
+      <div className="bg-white shadow rounded-lg grid grid-cols-10 min-h-[600px]">
+        <div className="col-span-3 p-4">
+          <MenuDashboard onMenuSelect={handleMenuSelect} activeKey={activeKey} />
         </div>
-      </div>
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <ActiveComponent />
+        <div className="col-span-7 p-4">
+          <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
+            <TabPanel header="Charts">
+              <ChartDashboard />
+            </TabPanel>
+            <TabPanel header="Products">
+              <ProductList />
+            </TabPanel>
+            <TabPanel header="Users">
+              <UserList />
+            </TabPanel>
+            <TabPanel header="Appointments">
+              <AppointmentList />
+            </TabPanel>
+
+          </TabView>
+        </div>
       </div>
     </div>
   );
